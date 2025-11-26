@@ -1,20 +1,15 @@
 import "./App.css";
-import MovieCard from "./components/UI/MovieCard.jsx";
+import { Routes, Route } from "react-router";
+import MoviePage from "./components/Pages/MoviePage.jsx";
+import GoogleAuth from "./components/UI/GoogleAuth.jsx";
 
 function App() {
   return (
     <>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-
-      <div className="mt-6">
-        <MovieCard
-          image="/public/sample-poster.jpg"
-          title="Sample Movie"
-          description="A short sample description that demonstrates the MovieCard layout. It should truncate after a few lines in the card view."
-          duration="1h 42m"
-          releaseDate="2024"
-        />
-      </div>
+      <Routes>
+        <Route path="/" element={<MoviePage />} />
+        <Route path="/auth" element={<GoogleAuth />} />
+      </Routes>
     </>
   );
 }

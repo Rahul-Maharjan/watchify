@@ -1,92 +1,122 @@
 import React from "react";
 
-/**
- * MovieCard
- * Props:
- * - image: string (poster URL)
- * - title: string
- * - description: string
- * - duration: string (e.g. "1h 45m")
- * - releaseDate: string (e.g. "2024")
- * - isFavorite: boolean
- * - onToggleFavorite: function
- */
 const MovieCard = ({
-  image = "",
+  // default poster — put your image in public/poster-default.jpg
+  image = "/poster-default.jpg",
+  // optional thumbnail; if empty we'll reuse the poster
+  thumb = "",
   title = "Untitled",
-  description = "",
-  duration = "",
-  releaseDate = "",
-  isFavorite = false,
-  onToggleFavorite = () => {},
+  length = "0:00",
+  lang = "Eng",
+  rating = "0.0",
+  reviews = "0+",
 }) => {
+  const poster = image || "/poster-default.jpg";
+  const small = thumb || poster;
+
   return (
-    <article className="group relative w-full max-w-xs bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-250 ease-out">
+    <article className="relative w-72 bg-white rounded-2xl shadow-xl overflow-hidden">
+      {/* big poster */}
       <div className="relative">
         <img
-          src={image}
+          src={poster}
           alt={title}
-          className="w-full h-56 object-cover bg-gray-100"
+          className="w-full h-64 sm:h-72 object-cover rounded-t-2xl"
         />
 
-        {/* favorite button */}
+        {/* small thumbnail overlapping bottom-left */}
+        <div className="absolute left-4 -bottom-10">
+          <img
+            src={small}
+            alt={`${title} thumb`}
+            className="w-20 h-28 object-cover rounded-md shadow-md"
+          />
+        </div>
+
+        {/* play button overlapping bottom-right */}
         <button
-          aria-pressed={isFavorite}
-          onClick={onToggleFavorite}
-          className="absolute top-3 right-3 z-10 inline-flex items-center justify-center p-2 rounded-full bg-white/90 dark:bg-gray-800/80 backdrop-blur hover:scale-105 transform transition"
-          title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          className="absolute right-4 -bottom-8 bg-red-500 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transform transition"
+          aria-label={`Play ${title}`}
         >
-          {isFavorite ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-5 h-5 text-red-500"
-            >
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 3.99 4 6.5 4c1.74 0 3.41.81 4.5 2.09C12.09 4.81 13.76 4 15.5 4 18.01 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              className="w-5 h-5 text-gray-700 dark:text-gray-200"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.172 5.172a4 4 0 015.656 0L12 8.344l3.172-3.172a4 4 0 115.656 5.656L12 21.344 3.172 10.828a4 4 0 010-5.656z"
-              />
-            </svg>
-          )}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="white"
+            className="w-6 h-6 ml-0.5"
+          >
+            <path d="M4 2v20l18-10L4 2z" />
+          </svg>
         </button>
       </div>
 
-      <div className="p-4 flex flex-col gap-3">
-        <h3
-          className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate"
-          title={title}
-        >
-          {title}
-        </h3>
+      {/* content area - add top padding to account for overlapping elements */}
+      <div className="pt-12 pb-6 px-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+          </div>
 
-        <p className="text-xs text-gray-600 dark:text-gray-300 max-h-12 overflow-hidden">
-          {description}
-        </p>
+          {/* rating stars small visual */}
+          <div className="flex items-center gap-1">
+            <svg
+              className="w-4 h-4 text-yellow-400"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M12 .587l3.668 7.431L23.4 9.75l-5.7 5.56L19.335 24 12 19.897 4.665 24l1.635-8.69L.6 9.75l7.732-1.732z" />
+            </svg>
+            <span className="text-sm text-yellow-500 font-medium">
+              {rating}
+            </span>
+          </div>
+        </div>
 
-        <div className="mt-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-          <span>{duration}</span>
-          <span className="ml-2">{releaseDate}</span>
+        {/* small stars under title like five-star */}
+        <div className="mt-2 flex items-center gap-1">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <svg
+              key={i}
+              className={`w-4 h-4 ${
+                i < Math.round(Number(rating))
+                  ? "text-yellow-400"
+                  : "text-gray-200"
+              }`}
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M12 .587l3.668 7.431L23.4 9.75l-5.7 5.56L19.335 24 12 19.897 4.665 24l1.635-8.69L.6 9.75l7.732-1.732z" />
+            </svg>
+          ))}
+        </div>
+
+        {/* stats grid */}
+        <div className="mt-4 grid grid-cols-4 gap-2 text-center text-xs text-gray-500">
+          <div>
+            <div className="text-gray-400">Length</div>
+            <div className="mt-1 text-sm text-gray-900 font-medium">
+              {length}
+            </div>
+          </div>
+          <div>
+            <div className="text-gray-400">Lang</div>
+            <div className="mt-1 text-sm text-gray-900 font-medium">{lang}</div>
+          </div>
+          <div>
+            <div className="text-gray-400">Rating</div>
+            <div className="mt-1 text-sm text-gray-900 font-medium">
+              {rating}
+            </div>
+          </div>
+          <div>
+            <div className="text-gray-400">Review</div>
+            <div className="mt-1 text-sm text-gray-900 font-medium">
+              {reviews}
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* subtle hover effect: slight lift */}
-      <style>{`
-        .group:hover { transform: translateY(-4px); }
-        .group { transition: transform 200ms ease, box-shadow 200ms ease; }
-      `}</style>
     </article>
   );
 };
